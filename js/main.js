@@ -3,36 +3,78 @@
 // Custom script goes here.
 //////////////////////////////////////////////////
 
-$( document ).ready(function() {
+$(document).ready(function() {
     var userInfo = {
         firstName: 'Jane',
         lastName: 'Doe'
     };
+
     var voteCounts = {
         great: 0,
         greatest: 0,
         total: 0
     };
+    
+    // created functions to be able to fadeout with view details and fade in with hide details showing in the button.
+    $('.view-details').on('click', function(event){
+        console.log(event);
+        var targetElement = event.target;
+        var container = targetElement.parentElement.parentElement;
+        $(container).find('.details').each(function(index,el){
+            if ($(el).is(':visible')){
+                $(el).fadeOut();
+                targetElement.innerText = "View Details"    
+            } 
+            else {
+                $(el).fadeIn();
+                targetElement.innerText = "Hide Details"
+            }
+        });
+    });
+    
+    //login click to hide login and show name
+    $('#login-form .btn').on('click', function(event){
+        var $loginForm = $('#login-form'),
+            $userInfoContainer = $('#navbar .user-info'),
+            $nameContainer = $userInfoContainer.find('.user-fullname');
+        
+        //hide login form      
+        $loginForm.hide();
+        $userInfoContainer.show();
+        $nameContainer.text(userInfo.firstName + ' ' + userInfo.lastName);
+    });
+    
+    $('.voting .vote').click(function(event){
+        var clickedButton = event.target;
+        var voteOption = $(clickedButton).attr('data-vote');
+      
+        //update great/greatest/total counters
+        if (voteOption == 'great'){
+            voteCounts.great++;
+        }
+        if (voteOption == 'greatest'){
+            voteCounts.greatest++;
+        }
+        voteCounts.total = voteCounts.greatest + voteCounts.great;
+                
+        //calculate percentages
+        var percentGreat = (voteCounts.great / voteCounts.total) * 100;
+        var percentGreatest = (voteCounts.greatest / voteCounts.total) * 100;
+        
+        //update progress bars 
+        var $greatProgress = $('.progress .great-progress');
+        var $greatestProgress = $('.progress .greatest-progress');
+    
+        $greatProgress.width(percentGreat + '%');
+        $greatestProgress.width(percentGreatest + '%');
+        
+    });
+     
+          
     // Place all your Javascript code inside this "document ready" function so
     // it does not run until the DOM is ready for Javascript manipulation.
 
-    // TODO: Create a function to listen for clicks on the "login" button.
-    //      1. When a user clicks the "login" button, hide the login
-    //          form elements on the page.
-    //      2. Fill the user's first and last name into `div.user-info`.
-    //      (NOTE: You do not have to perform any validation on the data as
-    //          a base requirement.)
 
-
-    // TODO: Create a function to listen for clicks on all the "View Details"
-    // buttons so that when a user clicks a "View Details" button they see
-    // the content contained in the elements with the class "details" in the
-    // proper part of the screen.
-    //      1. When user clicks a "view details" button, find the parent of that element.
-    //      2. Within that parent, find all the elements that have the class `details`.
-    //      3. Toggle visibility of all the elements within that parent with the class `details`.
-    //      4. Change the text of the "view details" button to read "hide details" so the user
-    //          understands they can hide the text again.
 
     // TODO: Create a function that listens for clicks on the voting buttons and
     // looks at the `data-vote` attribute on each button to see what was voted for,
